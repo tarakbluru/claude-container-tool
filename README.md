@@ -72,6 +72,27 @@ This will:
 - Remove the container and associated volumes
 - Show any remaining Claude containers
 
+### PowerShell Profile Setup (Recommended)
+
+For easier access, add these functions to your PowerShell profile:
+
+```powershell
+# Add to your PowerShell profile ($PROFILE)
+function Start-Claude { 
+    F:\BackUP\Dropbox\Projects\tarak\claude_container\start-claude.ps1 
+}
+
+function Stop-Claude { 
+    F:\BackUP\Dropbox\Projects\tarak\claude_container\stop-claude.ps1 
+}
+```
+
+**To set up:**
+1. Open PowerShell and run: `notepad $PROFILE`
+2. Add the functions above (adjust paths to match your installation)
+3. Save and restart PowerShell
+4. Now you can simply run `Start-Claude` or `Stop-Claude` from any project directory
+
 ### Manual Container Management
 
 You can also manage containers manually:
