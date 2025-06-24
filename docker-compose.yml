@@ -1,0 +1,10 @@
+services:
+  claude-dev:
+    image: claude-dev
+    volumes:
+      - ${WORKSPACE_DIR:-.}:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+
+# To run podman compose run claude-dev
