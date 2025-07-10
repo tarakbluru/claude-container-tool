@@ -79,11 +79,11 @@ For easier access, add these functions to your PowerShell profile:
 ```powershell
 # Add to your PowerShell profile ($PROFILE)
 function Start-Claude { 
-    F:\BackUP\Dropbox\Projects\tarak\claude_container\start-claude.ps1 
+    <path>\start-claude.ps1 
 }
 
 function Stop-Claude { 
-    F:\BackUP\Dropbox\Projects\tarak\claude_container\stop-claude.ps1 
+    <path>\claude_container\stop-claude.ps1 
 }
 ```
 
