@@ -34,7 +34,16 @@ A containerized development environment for [Anthropic Claude Code](https://www.
    docker build -t claude-dev .
    ```
 
-3. **Set up your API key** (refer to [Claude Code documentation](https://docs.anthropic.com/en/docs/claude-code))
+3. **Configure environment variables:**
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env with your actual git credentials
+   # Update GIT_USER_NAME and GIT_USER_EMAIL with your details
+   ```
+
+4. **Set up your API key** (refer to [Claude Code documentation](https://docs.anthropic.com/en/docs/claude-code))
 
 ## 🖥️ Usage
 
@@ -114,9 +123,12 @@ podman compose -p $(basename $(pwd)) down
 ```
 claude-container-tool/
 ├── Dockerfile              # Container definition with Claude Code
-├── docker-compose.yml      # Service configuration
+├── docker-compose.yml      # Service configuration with git env vars
 ├── start-claude.ps1        # PowerShell script to start Claude
 ├── stop-claude.ps1         # PowerShell script to stop Claude
+├── .env.example            # Environment variables template
+├── .env                    # Your actual environment variables (excluded from git)
+├── .gitignore              # Git ignore rules
 └── README.md               # This file
 ```
 
@@ -124,7 +136,18 @@ claude-container-tool/
 
 ### Environment Variables
 
+The following environment variables can be configured in your `.env` file:
+
+**Git Configuration:**
+- `GIT_USER_NAME`: Your git username for commit authoring (e.g., "tarakesh")
+- `GIT_USER_EMAIL`: Your git email for commit authoring (e.g., "tarakesh.nc@gmail.com")
+
+**Container Configuration:**
 - `WORKSPACE_DIR`: Directory to mount as workspace (automatically set by scripts)
+
+**GitHub Configuration (optional):**
+- `GITHUB_USERNAME`: Your GitHub username
+- `GITHUB_TOKEN`: GitHub Personal Access Token for API access
 
 ### Customizing the Container
 

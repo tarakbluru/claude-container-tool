@@ -1,6 +1,9 @@
 services:
   claude-dev:
     image: claude-dev
+    environment:
+      - GIT_USER_NAME=${GIT_USER_NAME}
+      - GIT_USER_EMAIL=${GIT_USER_EMAIL}
     volumes:
       - ${WORKSPACE_DIR:-.}:/workspace
     working_dir: /workspace
