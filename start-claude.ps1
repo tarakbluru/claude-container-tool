@@ -24,7 +24,7 @@ if (-not (Test-Path $dockerComposePath)) {
 }
 
 # Check if container is already running
-$runningContainers = podman ps --format "{{.Names}}" | Where-Object { $_ -like "*$projectName-claude-dev*" }
+$runningContainers = podman ps --format "{{.Names}}" | Where-Object { $_ -like "*$projectName-claude-mcp*" }
 
 if ($runningContainers) {
     Write-Host "✅ Container already running: $runningContainers" -ForegroundColor Green
@@ -48,7 +48,7 @@ Write-Host "🖥️  Opening bash prompt..." -ForegroundColor Cyan
 Write-Host "📝 To exit, type 'exit' in the container" -ForegroundColor Gray
 Write-Host "───────────────────────────────────────────" -ForegroundColor Gray
 
-podman compose -p $projectName -f $dockerComposePath exec claude-dev bash
+podman compose -p $projectName -f $dockerComposePath exec claude-mcp bash
 
 # After exiting bash
 Write-Host "───────────────────────────────────────────" -ForegroundColor Gray

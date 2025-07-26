@@ -20,7 +20,7 @@ if (-not (Test-Path $dockerComposePath)) {
 }
 
 # Check if container is running
-$runningContainers = podman ps --format "{{.Names}}" | Where-Object { $_ -like "*$projectName-claude-dev*" }
+$runningContainers = podman ps --format "{{.Names}}" | Where-Object { $_ -like "*$projectName-claude-mcp*" }
 
 if (-not $runningContainers) {
     Write-Host "ℹ️  No Claude container running for project '$projectName'" -ForegroundColor Gray
@@ -43,7 +43,7 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 # Show remaining Claude containers (if any)
-$remainingContainers = podman ps --format "{{.Names}}" | Where-Object { $_ -like "*claude-dev*" }
+$remainingContainers = podman ps --format "{{.Names}}" | Where-Object { $_ -like "*claude-mcp*" }
 if ($remainingContainers) {
     Write-Host "ℹ️  Other Claude containers still running:" -ForegroundColor Gray
     $remainingContainers | ForEach-Object { Write-Host "   - $_" -ForegroundColor Gray }

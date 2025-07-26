@@ -1,13 +1,16 @@
 services:
-  claude-dev:
-    image: claude-dev
+  claude-mcp:
+    image: claude-mcp
     environment:
       - GIT_USER_NAME=${GIT_USER_NAME}
       - GIT_USER_EMAIL=${GIT_USER_EMAIL}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
     volumes:
       - ${WORKSPACE_DIR:-.}:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock  # Allow Docker-in-Docker for MCP
     working_dir: /workspace
     stdin_open: true
     tty: true
+    privileged: true  # Required for Docker-in-Docker
 
-# To run podman compose run claude-dev
+# To run podman compose run claude-mcp

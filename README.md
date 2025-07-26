@@ -26,12 +26,12 @@ A containerized development environment for [Anthropic Claude Code](https://www.
 
 2. **Build the Claude container image:**
    ```bash
-   podman build -t claude-dev .
+   podman build -t claude-mcp .
    ```
    
    Or with Docker:
    ```bash
-   docker build -t claude-dev .
+   docker build -t claude-mcp .
    ```
 
 3. **Configure environment variables:**
@@ -112,7 +112,7 @@ export WORKSPACE_DIR=$(pwd)
 podman compose -p $(basename $(pwd)) up -d
 
 # Connect to running container
-podman compose -p $(basename $(pwd)) exec claude-dev bash
+podman compose -p $(basename $(pwd)) exec claude-mcp bash
 
 # Stop container
 podman compose -p $(basename $(pwd)) down
@@ -183,7 +183,7 @@ CMD ["bash"]
 
 ### Container Won't Start
 - Ensure Podman/Docker is running
-- Check if the `claude-dev` image exists: `podman images`
+- Check if the `claude-mcp` image exists: `podman images`
 - Verify the docker-compose.yml path is correct
 
 ### Permission Issues
@@ -206,7 +206,7 @@ To update Claude Code to the latest version:
 
 ```bash
 # Rebuild the container
-podman build -t claude-dev . --no-cache
+podman build -t claude-mcp . --no-cache
 ```
 
 ## 🤝 Contributing

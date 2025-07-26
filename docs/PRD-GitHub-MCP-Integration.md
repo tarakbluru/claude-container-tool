@@ -54,15 +54,18 @@ Enable Claude Code running in a Podman/Docker container to interact with GitHub 
 
 #### Dockerfile Updates
 ```dockerfile
-# Add to existing Dockerfile
-RUN npm install -g @modelcontextprotocol/server-github
+# Install Docker CLI for MCP GitHub server
+RUN apt-get update && apt-get install -y \
+    docker-ce-cli \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create MCP configuration directory
 RUN mkdir -p /root/.config/claude
 
-# Add MCP server startup script
-COPY scripts/setup-mcp.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/setup-mcp.sh
+# Copy scripts
+COPY scripts/connect_mcp.sh /connect_mcp.sh
+COPY scripts/entrypoint.sh /entrypoint.sh
+RUN chmod +x /connect_mcp.sh /entrypoint.sh
 ```
 
 #### Docker Compose Updates
@@ -70,56 +73,93 @@ RUN chmod +x /usr/local/bin/setup-mcp.sh
 # Add to docker-compose.yml
 environment:
   - GITHUB_TOKEN=${GITHUB_TOKEN}
-  - GIT_USERNAME=${GIT_USERNAME}
-  - GIT_EMAIL=${GIT_EMAIL}
+  - GIT_USER_NAME=${GIT_USER_NAME}
+  - GIT_USER_EMAIL=${GIT_USER_EMAIL}
+volumes:
+  - /var/run/docker.sock:/var/run/docker.sock:ro  # For MCP Docker containers
 ```
 
 ### 3.2 MCP Configuration
 
-#### Server Configuration Structure
-```json
-{
-  "mcpServers": {
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
-      }
-    }
-  }
-}
+#### Server Configuration Method
+The GitHub MCP server is configured dynamically using the official Docker image:
+```bash
+# Using claude mcp add command with Docker stdio mode
+claude mcp add github -- docker run -i --rm \
+  -e GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_TOKEN" \
+  ghcr.io/github/github-mcp-server
 ```
 
-### 3.3 Setup Script (`setup-mcp.sh`)
+This approach:
+- Uses the official GitHub MCP server Docker image
+- Runs in stdio mode for container compatibility
+- Automatically registers with Claude Code
+- Requires Docker socket access
+
+### 3.3 Setup Scripts
+
+#### connect_mcp.sh
 ```bash
 #!/bin/bash
 # Configure GitHub MCP server on container startup
 
 if [ -n "$GITHUB_TOKEN" ]; then
-    # Create MCP configuration
-    cat > /root/.config/claude/claude.json << EOF
-{
-  "mcpServers": {
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_TOKEN": "$GITHUB_TOKEN"
-      }
-    }
-  }
-}
-EOF
+    echo "Configuring GitHub MCP server..."
+    
+    # Add GitHub MCP server using official Docker image (stdio mode)
+    claude mcp add github -- docker run -i --rm \
+      -e GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_TOKEN" \
+      ghcr.io/github/github-mcp-server
+    
     echo "GitHub MCP server configured successfully"
 else
-    echo "Warning: GITHUB_TOKEN not set, GitHub MCP server will not be available"
+    echo "Warning: GITHUB_TOKEN not set"
+    echo "GitHub MCP server will not be available"
 fi
 ```
 
-## 4. User Guide
+#### entrypoint.sh
+```bash
+#!/bin/bash
+# Container entrypoint script
 
-### 4.1 Setup Instructions
+# Configure git if credentials are provided
+if [ -n "$GIT_USER_NAME" ]; then 
+    git config --global user.name "$GIT_USER_NAME"
+fi
+
+if [ -n "$GIT_USER_EMAIL" ]; then 
+    git config --global user.email "$GIT_USER_EMAIL"
+fi
+
+# Mark workspace as safe directory
+git config --global --add safe.directory /workspace
+
+# Connect to MCP server
+/connect_mcp.sh
+
+# Execute the main command
+exec "$@"
+```
+
+## 4. Implementation Details
+
+### 4.1 Architecture
+The implementation uses a Docker-in-Docker approach:
+1. Main container runs Claude Code with SuperClaude
+2. GitHub MCP server runs as a separate Docker container
+3. Communication happens via stdio protocol
+4. Docker socket enables container management
+
+### 4.2 Key Changes from Original Design
+1. **Docker-based MCP**: Uses official Docker image instead of npm package
+2. **Dynamic Configuration**: Uses `claude mcp add` instead of static JSON config
+3. **Git Integration**: Added automatic git configuration for commits
+4. **SuperClaude Integration**: Includes full SuperClaude framework
+
+## 5. User Guide
+
+### 5.1 Setup Instructions
 
 1. **Create GitHub Personal Access Token**
    - Go to GitHub Settings > Developer settings > Personal access tokens
@@ -132,6 +172,8 @@ fi
    ```bash
    # Update .env file
    GITHUB_TOKEN=ghp_your_token_here
+   GIT_USER_NAME="Your Name"
+   GIT_USER_EMAIL="your.email@example.com"
    ```
 
 3. **Start Container**
@@ -139,7 +181,7 @@ fi
    ./start-claude.ps1
    ```
 
-### 4.2 Usage Examples
+### 5.2 Usage Examples
 
 Once configured, Claude Code can:
 
@@ -157,50 +199,63 @@ claude> "Create an issue in myrepo with title 'Bug: X not working'"
 claude> "Show open PRs in organization/project"
 ```
 
-## 5. Security Considerations
+## 6. Security Considerations
 
-### 5.1 Token Management
+### 6.1 Token Management
 - Store GitHub token in `.env` file (already gitignored)
 - Never commit tokens to version control
 - Use minimal required scopes for tokens
 - Rotate tokens periodically
 
-### 5.2 Container Security
+### 6.2 Container Security
 - Token is passed as environment variable (not in build args)
 - No token logging in startup scripts
-- MCP server runs with container user permissions
+- MCP server runs in separate container with limited permissions
+- Docker socket is mounted read-only for security
 
-## 6. Testing & Validation
+## 7. Testing & Validation
 
-### 6.1 Verification Steps
+### 7.1 Verification Steps
 1. Container starts without errors
 2. MCP server registers successfully
 3. Can access public repositories
 4. Can access private repositories with valid token
 5. Error handling for invalid/missing tokens
 
-### 6.2 Test Commands
+### 7.2 Test Commands
 ```bash
 # Inside container
 claude mcp list  # Should show github server
-claude> "List repositories for github:octocat"  # Test public access
-claude> "Show my private repositories"  # Test private access
+
+# Test GitHub access through Claude Code
+claude "List my GitHub repositories"
+claude "Show recent pull requests in my repositories"
+claude "Create an issue in owner/repo"
 ```
 
-## 7. Future Enhancements
+## 8. Future Enhancements
 
 1. **Multiple Token Support**: Support for different tokens per organization
 2. **Token Refresh**: Automatic token refresh for OAuth apps
 3. **Caching Layer**: Local caching of frequently accessed repositories
 4. **GitLab/Bitbucket**: Support for other Git platforms
 
-## 8. Appendix
+## 9. Appendix
 
 ### Required Token Scopes
 - `repo`: Full control of private repositories
 - `read:org`: Read-only access to organization membership
 - `read:user`: Read-only access to user profile data
 - `workflow`: Update GitHub Action workflows (optional)
+
+### Docker Socket Access
+The container requires access to the Docker socket to run MCP servers:
+```yaml
+volumes:
+  - /var/run/docker.sock:/var/run/docker.sock:ro
+```
+
+This allows the container to spawn Docker-based MCP servers.
 
 ### Error Codes
 - `MCP001`: GitHub token not provided
