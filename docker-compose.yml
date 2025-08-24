@@ -5,6 +5,9 @@ services:
       - GIT_USER_NAME=${GIT_USER_NAME}
       - GIT_USER_EMAIL=${GIT_USER_EMAIL}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL}
+      - CLAUDE_CODE_MAX_OUTPUT_TOKENS=${CLAUDE_CODE_MAX_OUTPUT_TOKENS}
+      - MAX_THINKING_TOKENS=${MAX_THINKING_TOKENS}
     volumes:
       - ${WORKSPACE_DIR:-.}:/workspace
       - /var/run/docker.sock:/var/run/docker.sock  # Allow Docker-in-Docker for MCP
