@@ -6,7 +6,9 @@ A containerized development environment for [Anthropic Claude Code](https://www.
 
 - **Project-based isolation**: Each project gets its own Claude container instance
 - **Persistent workspace**: Your project files are mounted into the container
+- **Complete GitHub integration**: Full repository lifecycle management with GitHub CLI and MCP server
 - **Easy management**: Simple PowerShell scripts for starting and stopping containers
+- **Enhanced AI capabilities**: SuperClaude framework with specialized personas and commands
 - **Podman support**: Built for Podman but compatible with Docker
 - **Cross-platform**: Works on Windows, Linux, and macOS
 
@@ -66,6 +68,38 @@ The script will:
 - Create a container named after your project folder
 - Mount your project files into `/workspace` in the container
 - Start an interactive bash session with Claude Code available
+
+### GitHub Integration Capabilities
+
+With both GitHub CLI and MCP server integrated, Claude can handle complete repository lifecycles:
+
+**Repository Creation:**
+```bash
+# Claude can create new repositories directly
+claude> "Create a new repository called 'my-project' and initialize it with a README"
+
+# Using GitHub CLI directly
+gh repo create my-project --public --clone
+```
+
+**Complete Project Workflows:**
+```bash
+# End-to-end project setup
+claude> "Create a React TypeScript project, initialize git, create GitHub repo, and set up CI/CD"
+
+# Repository management
+claude> "Create a release for version 1.0.0 and update the changelog"
+claude> "Create a pull request for the feature branch"
+```
+
+**Advanced GitHub Operations:**
+```bash
+# Inside the container
+gh issue create --title "Bug: Login not working" --body "Description here"
+gh pr create --title "Fix login bug" --body "This PR fixes the login issue"
+gh repo clone owner/repo
+gh release create v1.0.0 --title "Version 1.0.0" --notes "Release notes"
+```
 
 ### Stopping Claude for a Project
 

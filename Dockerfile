@@ -1,6 +1,6 @@
 FROM node:lts
 
-# Install Docker CLI for MCP GitHub server
+# Install Docker CLI for MCP GitHub server and GitHub CLI
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
@@ -10,10 +10,13 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
+    expect \
     && curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
+    && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
     && apt-get update \
-    && apt-get install -y docker-ce-cli \
+    && apt-get install -y docker-ce-cli gh \
     && rm -rf /var/lib/apt/lists/*
 
 # Update npm to latest version
@@ -26,8 +29,8 @@ RUN npm install -g @anthropic-ai/claude-code
 RUN python3 -m venv /opt/superclaude \
     && /opt/superclaude/bin/pip install SuperClaude
 
-# Install SuperClaude Framework during build (not at runtime)
-RUN /opt/superclaude/bin/python -m SuperClaude install --profile developer --yes
+# Don't install SuperClaude Framework during build - do it at runtime
+# RUN /opt/superclaude/bin/python -m SuperClaude install 
 
 # Make SuperClaude available system-wide
 RUN ln -s /opt/superclaude/bin/python /usr/local/bin/superclaude-python \
