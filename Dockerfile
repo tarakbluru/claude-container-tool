@@ -1,6 +1,6 @@
 FROM node:lts
 
-# Install Docker CLI for MCP GitHub server and GitHub CLI
+# Install Python, pip, and other dependencies
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
+    python3-full \
+    pipx \
     expect \
     && curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
@@ -25,13 +27,16 @@ RUN npm install -g npm@latest
 # Install Claude Code
 RUN npm install -g @anthropic-ai/claude-code
 
-# Install SuperClaude from GitHub repository
-RUN git clone https://github.com/NomenAK/SuperClaude.git /opt/SuperClaude \
-    && cd /opt/SuperClaude \
-    && ./install.sh
+# Install SuperClaude Framework using pipx (bypasses PEP 668)
+RUN echo "=== Installing SuperClaude Framework via pipx ===" \
+    && pipx install SuperClaude \
+    && echo "✓ SuperClaude Framework installed via pipx" \
+    && echo "=== Running SuperClaude installer ===" \
+    && /root/.local/bin/SuperClaude install --yes \
+    && echo "✓ SuperClaude Framework configured for Claude Code"
 
-# Make SuperClaude available system-wide
-RUN ln -s /opt/SuperClaude/superclaude /usr/local/bin/superclaude
+# Make pipx binaries available in PATH
+ENV PATH="/root/.local/bin:$PATH"
 
 # Create MCP configuration directory
 RUN mkdir -p /root/.config/claude
