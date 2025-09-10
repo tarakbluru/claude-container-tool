@@ -25,17 +25,13 @@ RUN npm install -g npm@latest
 # Install Claude Code
 RUN npm install -g @anthropic-ai/claude-code
 
-# Create virtual environment and install SuperClaude
-RUN python3 -m venv /opt/superclaude \
-    && /opt/superclaude/bin/pip install SuperClaude
-
-# Don't install SuperClaude Framework during build - do it at runtime
-# RUN /opt/superclaude/bin/python -m SuperClaude install 
+# Install SuperClaude from GitHub repository
+RUN git clone https://github.com/NomenAK/SuperClaude.git /opt/SuperClaude \
+    && cd /opt/SuperClaude \
+    && ./install.sh
 
 # Make SuperClaude available system-wide
-RUN ln -s /opt/superclaude/bin/python /usr/local/bin/superclaude-python \
-    && echo '#!/bin/bash\n/opt/superclaude/bin/python -m SuperClaude "$@"' > /usr/local/bin/SuperClaude \
-    && chmod +x /usr/local/bin/SuperClaude
+RUN ln -s /opt/SuperClaude/superclaude /usr/local/bin/superclaude
 
 # Create MCP configuration directory
 RUN mkdir -p /root/.config/claude

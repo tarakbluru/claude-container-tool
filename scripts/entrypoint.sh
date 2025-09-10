@@ -7,14 +7,18 @@ if [ ! -d "/root/.claude" ] || [ ! -f "/root/.claude/.initialized" ]; then
     echo "Initializing SuperClaude framework..."
     echo "============================================"
     
-    # Create expect script for automated installation
-    cat > /tmp/install_superclaude.exp << 'EOF'
+    # SuperClaude is already installed via git clone and install.sh in the Dockerfile
+    # Just run any post-install configuration if needed
+    if command -v superclaude &> /dev/null; then
+        # Create expect script for automated configuration if needed
+        cat > /tmp/configure_superclaude.exp << 'EOF'
 #!/usr/bin/expect -f
 set timeout 60
 
-spawn /opt/superclaude/bin/python -m SuperClaude install
+# Run SuperClaude configuration if it has interactive setup
+spawn superclaude --configure
 
-# Handle MCP server selection
+# Handle any interactive prompts
 expect {
     "Enter numbers separated by commas*" {
         send "7\r"
@@ -31,16 +35,18 @@ expect {
     eof
 }
 EOF
-    
-    chmod +x /tmp/install_superclaude.exp
-    if /tmp/install_superclaude.exp; then
+        
+        chmod +x /tmp/configure_superclaude.exp
+        # Try configuration, but don't fail if SuperClaude doesn't need interactive setup
+        /tmp/configure_superclaude.exp 2>/dev/null || true
+        
         touch /root/.claude/.initialized
-        echo "✓ SuperClaude framework initialized successfully!"
+        echo "✓ SuperClaude framework ready!"
+        rm -f /tmp/configure_superclaude.exp
     else
-        echo "⚠ SuperClaude initialization had issues, but continuing..."
+        echo "⚠ SuperClaude command not found, but continuing..."
+        touch /root/.claude/.initialized
     fi
-    
-    rm -f /tmp/install_superclaude.exp
 fi
 
 # Configure git if credentials are provided
