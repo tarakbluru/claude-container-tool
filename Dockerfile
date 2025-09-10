@@ -31,9 +31,14 @@ RUN npm install -g @anthropic-ai/claude-code
 RUN echo "=== Installing SuperClaude Framework via pipx ===" \
     && pipx install SuperClaude \
     && echo "✓ SuperClaude Framework installed via pipx" \
-    && echo "=== Running SuperClaude installer ===" \
-    && /root/.local/bin/SuperClaude install --yes \
-    && echo "✓ SuperClaude Framework configured for Claude Code"
+    && echo "=== Running SuperClaude installer with all components ===" \
+    && PATH="/root/.local/bin:$PATH" SuperClaude install --force --yes --components all \
+    && echo "=== Verifying installation ===" \
+    && ls -la /root/.claude/ \
+    && echo "Commands directory contents:" \
+    && ls -la /root/.claude/commands/ \
+    && echo "Commands count: $(ls /root/.claude/commands/ 2>/dev/null | wc -l)" \
+    && echo "✓ SuperClaude Framework fully configured"
 
 # Make pipx binaries available in PATH
 ENV PATH="/root/.local/bin:$PATH"

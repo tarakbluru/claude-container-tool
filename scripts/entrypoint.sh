@@ -14,12 +14,12 @@ if [ ! -f "/root/.claude/.initialized" ]; then
     if command -v SuperClaude &> /dev/null; then
         echo "✓ SuperClaude Framework found via pipx"
         
-        # Check if configuration files exist
-        if [ -d "/root/.claude" ] && [ -f "/root/.claude/CLAUDE.md" ]; then
-            echo "✓ SuperClaude configuration files already installed"
+        # Check if configuration files exist and commands are populated
+        if [ -d "/root/.claude" ] && [ -f "/root/.claude/CLAUDE.md" ] && [ "$(ls -A /root/.claude/commands/ 2>/dev/null | wc -l)" -gt 0 ]; then
+            echo "✓ SuperClaude configuration files already installed and commands populated"
         else
-            echo "Running SuperClaude installer..."
-            if SuperClaude install --yes; then
+            echo "SuperClaude framework found but commands missing, running installer..."
+            if SuperClaude install --force --yes; then
                 echo "✓ SuperClaude Framework configured successfully!"
             else
                 echo "⚠ SuperClaude installer had issues, but framework is available"
