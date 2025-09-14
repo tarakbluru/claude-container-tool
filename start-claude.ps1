@@ -12,6 +12,7 @@ $dockerComposePath = Join-Path $scriptDir "docker-compose.yml"
 
 # Set environment variable for current directory to override the volume mapping
 $env:WORKSPACE_DIR = $currentPath
+$env:PROJECT_NAME = $projectName
 
 Write-Host "🚀 Starting Claude for project: $projectName" -ForegroundColor Green
 Write-Host "📁 Workspace: $currentPath" -ForegroundColor Cyan

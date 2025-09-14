@@ -47,6 +47,12 @@ ENV PATH="/root/.local/bin:$PATH"
 # Create MCP configuration directory
 RUN mkdir -p /root/.config/claude
 
+# Create global Claude configuration directory
+RUN mkdir -p /root/.claude
+
+# Copy global CLAUDE.md to the container (this makes it available in every container instance)
+COPY global_CLAUDE.md /root/.claude/CLAUDE.md
+
 # Copy scripts
 COPY scripts/connect_mcp.sh /connect_mcp.sh
 COPY scripts/entrypoint.sh /entrypoint.sh

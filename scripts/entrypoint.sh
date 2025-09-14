@@ -59,8 +59,12 @@ setup_project_superclaude() {
         # Create project .claude directory if it doesn't exist
         mkdir -p "$project_dir/.claude"
         
-        # Create a project-specific CLAUDE.md that integrates with the full framework
-        if [ ! -f "$project_dir/.claude/CLAUDE.md" ]; then
+        # ADDED: Check if project has existing claude.md and copy it
+        if [ -f "$project_dir/claude.md" ]; then
+            cp "$project_dir/claude.md" "$project_dir/.claude/CLAUDE.md"
+            echo "✓ Found and copied project claude.md to .claude/CLAUDE.md"
+        elif [ ! -f "$project_dir/.claude/CLAUDE.md" ]; then
+            # Create a project-specific CLAUDE.md that integrates with the full framework
             cat > "$project_dir/.claude/CLAUDE.md" << 'EOF'
 # Project SuperClaude Configuration
 
@@ -176,12 +180,12 @@ if command -v SuperClaude &> /dev/null; then
     echo "   • Task management and project coordination"
     echo "   • Smart persona auto-activation and switching"
     echo ""
-    echo "📁 Configuration Status:"
+    echo "🔧 Configuration Status:"
     if [ -f "/root/.claude/CLAUDE.md" ]; then
         echo "   ✅ Global: ~/.claude/ (full framework installed)"
         echo "   📊 Files: $(ls /root/.claude/ 2>/dev/null | wc -l) configuration files"
     else
-        echo "   ⚠  Global: ~/.claude/ (may need setup)"
+        echo "   ⚠   Global: ~/.claude/ (may need setup)"
     fi
     
     if [ -f "/workspace/.claude/CLAUDE.md" ]; then
@@ -209,7 +213,7 @@ if command -v SuperClaude &> /dev/null; then
     echo "🚀 Get started: Run 'claude' then try '/sc:brainstorm \"your idea\"'"
     
 else
-    echo "⚠  SuperClaude Framework not available"
+    echo "⚠   SuperClaude Framework not available"
     echo "💡 Expected: pipx install SuperClaude should be completed"
 fi
 
@@ -218,6 +222,8 @@ echo "🔧 Additional Capabilities:"
 echo "   • GitHub MCP integration with repository access"
 echo "   • Complete GitHub workflow management"
 echo "   • Docker-in-Docker for MCP servers"
+# ADDED: Show configuration merge status
+echo "   • Global CLAUDE.md + Project claude.md merging"
 echo "==================================="
 
 # Execute the main command

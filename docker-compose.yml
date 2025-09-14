@@ -8,6 +8,7 @@ services:
       - ANTHROPIC_MODEL=${ANTHROPIC_MODEL}
       - CLAUDE_CODE_MAX_OUTPUT_TOKENS=${CLAUDE_CODE_MAX_OUTPUT_TOKENS}
       - MAX_THINKING_TOKENS=${MAX_THINKING_TOKENS}
+      - PROJECT_NAME=${PROJECT_NAME}
     volumes:
       - ${WORKSPACE_DIR:-.}:/workspace
       - /var/run/docker.sock:/var/run/docker.sock  # Allow Docker-in-Docker for MCP
@@ -16,4 +17,4 @@ services:
     tty: true
     privileged: true  # Required for Docker-in-Docker
 
-# To run podman compose run claude-mcp
+# Works with your current start-claude.ps1
