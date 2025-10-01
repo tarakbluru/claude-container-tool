@@ -57,6 +57,15 @@ COPY global_CLAUDE.md /root/.claude/CLAUDE.md
 RUN mkdir -p /etc/claude
 COPY .env /etc/claude/.env
 
+# Configure shell to automatically source environment variables in all sessions
+RUN echo '' >> /root/.bashrc \
+    && echo '# Load Claude container environment variables' >> /root/.bashrc \
+    && echo 'if [ -f "/etc/claude/.env" ]; then' >> /root/.bashrc \
+    && echo '    set -a  # automatically export all variables' >> /root/.bashrc \
+    && echo '    source /etc/claude/.env' >> /root/.bashrc \
+    && echo '    set +a' >> /root/.bashrc \
+    && echo 'fi' >> /root/.bashrc
+
 # Copy scripts
 COPY scripts/connect_mcp.sh /connect_mcp.sh
 COPY scripts/entrypoint.sh /entrypoint.sh
