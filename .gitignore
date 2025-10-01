@@ -46,5 +46,9 @@ data/
 
 # PowerShell specific
 *.ps1.bak
+
 # Claude Code local settings
 .claude/settings.local.json
+
+# Claude session documentation (local context only)
+CLAUDE_SESSION_NOTES.md
