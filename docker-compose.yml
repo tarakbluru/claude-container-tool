@@ -2,12 +2,6 @@ services:
   claude-mcp:
     image: claude-mcp
     environment:
-      - GIT_USER_NAME=${GIT_USER_NAME}
-      - GIT_USER_EMAIL=${GIT_USER_EMAIL}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL}
-      - CLAUDE_CODE_MAX_OUTPUT_TOKENS=${CLAUDE_CODE_MAX_OUTPUT_TOKENS}
-      - MAX_THINKING_TOKENS=${MAX_THINKING_TOKENS}
       - PROJECT_NAME=${PROJECT_NAME}
     volumes:
       - ${WORKSPACE_DIR:-.}:/workspace

@@ -4,6 +4,17 @@
 # Ensure pipx binaries are in PATH
 export PATH="/root/.local/bin:$PATH"
 
+# Load Claude container environment variables
+if [ -f "/etc/claude/.env" ]; then
+    echo "Loading Claude container configuration from /etc/claude/.env..."
+    set -a  # automatically export all variables
+    source /etc/claude/.env
+    set +a
+    echo "✓ Environment variables loaded"
+else
+    echo "⚠ Warning: /etc/claude/.env not found, using system defaults"
+fi
+
 # Check SuperClaude Framework status
 if [ ! -f "/root/.claude/.initialized" ]; then
     echo "============================================"
