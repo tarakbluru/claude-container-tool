@@ -314,6 +314,15 @@ This ensures clean, maintainable code without accumulating technical debt from c
 - **Never change Windows paths** - they are correct for the user's actual system
 - **Analysis files** in `/workspace/reference/` are copies for Claude analysis only
 
+**CRITICAL**: **Python Command in Container Environment**
+- **Use `python3` instead of `python`** - The container environment requires explicit Python 3 reference
+- **Reason**: Linux containers often don't have `python` symlink or it may point to Python 2
+- **Examples**:
+  - ✅ Correct: `python3 script.py`
+  - ✅ Correct: `python3 -m pip install package`
+  - ❌ Incorrect: `python script.py`
+  - ❌ Incorrect: `python -m pip install package`
+
 ### Documentation Location Requirements
 
 **CRITICAL**: **All documentation files must be created in the `docs/` folder** - not in the project root.
@@ -332,6 +341,27 @@ This ensures clean, maintainable code without accumulating technical debt from c
 - **Example**: `2025_08_14_drop_by_2pts_functional`
 - **Purpose**: Mark functional milestones with clear date reference
 - **Usage**: Tag stable implementations after testing completion
+
+### Git Configuration and Troubleshooting
+
+**CRITICAL**: **Git Push Authentication Fix for Container Environment**
+
+**Issue**: Git push may fail with authentication errors even when GITHUB_TOKEN environment variable is properly set in the container.
+
+**Root Cause**: Git doesn't automatically use the GITHUB_TOKEN environment variable for HTTPS authentication.
+
+**Solution**: Update the remote URL to include the token directly:
+```bash
+git remote set-url origin https://${GITHUB_TOKEN}@github.com/owner/repository.git
+```
+
+**Benefits After Fix:**
+- ✅ Git push works successfully from container
+- ✅ Creates master branch on remote repository if needed
+- ✅ Sets up upstream tracking automatically
+- ✅ Future git push commands work without additional flags
+
+**When to Apply**: Use this fix when git push fails with authentication errors despite having GITHUB_TOKEN properly loaded in the container environment.
 
 ### Migration Strategy
 - **Copy** relevant code from prototype to src/ development files
