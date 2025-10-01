@@ -3,6 +3,9 @@ services:
     image: claude-mcp
     environment:
       - PROJECT_NAME=${PROJECT_NAME}
+      - ANTHROPIC_MODEL=claude-sonnet-4-5-20250929
+      - CLAUDE_CODE_MAX_OUTPUT_TOKENS=8192
+      - MAX_THINKING_TOKENS=4096
     volumes:
       - ${WORKSPACE_DIR:-.}:/workspace
       - /var/run/docker.sock:/var/run/docker.sock  # Allow Docker-in-Docker for MCP
