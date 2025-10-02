@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y docker-ce-cli gh \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Python packages
+RUN python3 -m pip install --break-system-packages requests pandas numpy python-dotenv
+
 # Update npm to latest version
 RUN npm install -g npm@latest
 
