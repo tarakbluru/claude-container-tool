@@ -22,7 +22,7 @@ if [ ! -f "/root/.claude/.initialized" ]; then
     echo "============================================"
     
     # Check if SuperClaude is installed via pipx
-    if command -v SuperClaude &> /dev/null; then
+    if command -v superclaude &> /dev/null; then
         echo "✓ SuperClaude Framework found via pipx"
         
         # Check if configuration files exist and commands are populated
@@ -30,7 +30,7 @@ if [ ! -f "/root/.claude/.initialized" ]; then
             echo "✓ SuperClaude configuration files already installed and commands populated"
         else
             echo "SuperClaude framework found but commands missing, running installer..."
-            if SuperClaude install --force --yes; then
+            if superclaude install; then
                 echo "✓ SuperClaude Framework configured successfully!"
             else
                 echo "⚠ SuperClaude installer had issues, but framework is available"
@@ -63,7 +63,7 @@ fi
 setup_project_superclaude() {
     local project_dir="/workspace"
     
-    if [ -d "$project_dir" ] && command -v SuperClaude &> /dev/null; then
+    if [ -d "$project_dir" ] && command -v superclaude &> /dev/null; then
         echo ""
         echo "🔧 Setting up SuperClaude for current project..."
         
@@ -174,11 +174,11 @@ echo "==================================="
 echo "Available enhancements:"
 
 # Check what's actually available
-if command -v SuperClaude &> /dev/null; then
+if command -v superclaude &> /dev/null; then
     echo "✅ SuperClaude Framework v4 (Full) - Installed via pipx"
     
     # Try to get version
-    SUPERCLAUDE_VERSION=$(SuperClaude --version 2>/dev/null || echo "4.x")
+    SUPERCLAUDE_VERSION=$(superclaude --version 2>/dev/null || echo "4.x")
     echo "   Version: $SUPERCLAUDE_VERSION"
     
     echo ""
@@ -196,7 +196,7 @@ if command -v SuperClaude &> /dev/null; then
         echo "   ✅ Global: ~/.claude/ (full framework installed)"
         echo "   📊 Files: $(ls /root/.claude/ 2>/dev/null | wc -l) configuration files"
     else
-        echo "   ⚠   Global: ~/.claude/ (may need setup)"
+        echo "   ⚠  Global: ~/.claude/ (may need setup)"
     fi
     
     if [ -f "/workspace/.claude/CLAUDE.md" ]; then
@@ -224,7 +224,7 @@ if command -v SuperClaude &> /dev/null; then
     echo "🚀 Get started: Run 'claude' then try '/sc:brainstorm \"your idea\"'"
     
 else
-    echo "⚠   SuperClaude Framework not available"
+    echo "⚠  SuperClaude Framework not available"
     echo "💡 Expected: pipx install SuperClaude should be completed"
 fi
 
