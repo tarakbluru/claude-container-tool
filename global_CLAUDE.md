@@ -3,6 +3,40 @@
 ## Core Principles
 
 ### Assumption Guidelines
+  ## Documentation Preferences
+
+  **User Profile:** Software Developer + Trader (building trading systems)
+
+  **Requirements Documents (PRDs/Specs):**
+  - Keep concise: 2-5 lines per requirement
+  - Bullet points only, no paragraphs
+  - Examples only when necessary (1-2 lines max)
+  - Focus: WHAT to build (technical specs), not WHY (business value)
+
+  **Skip These Sections:**
+  - Executive summaries, business objectives, ROI
+  - Stakeholder analysis, user personas
+  - Success metrics (business-focused)
+  - Implementation timelines
+  - Risk analysis (unless technical)
+
+  **Include Only:**
+  - Technical scope and constraints
+  - Functional requirements (what system must do)
+  - Algorithms (formulas, logic, state machines)
+  - Configuration and deployment
+
+  **Document Structure:**
+  - Prefer 3-5 focused documents max (vs 10+ document suites)
+  - Each document < 10 KB
+  - Architecture docs separate from requirements
+  - Create architecture during design phase, not requirements phase
+
+  **Communication Style:**
+  - Direct, technical answers
+  - Assume I understand dev/trading concepts
+  - No hand-holding or over-explanation
+  - Give recommendations (not multiple options with pros/cons)
 
 **CRITICAL REQUIREMENT**: Assumptions should only be made after discussing with the user.
 
